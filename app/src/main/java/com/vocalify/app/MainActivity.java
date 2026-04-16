@@ -1,12 +1,8 @@
 package com.vocalify.app;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,46 +12,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Bikin WebView memenuhi layar
         webView = new WebView(this);
         setContentView(webView);
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccess(true);
-        
-        // Supaya gak muncul layar putih kalau loading lama
-        webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                // Selesai loading
-            }
+        // Jembatan buat fitur Share
+        webView.addJavascriptInterface(new WebAppInterface(), "AndroidShare");
 
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                // Cek apakah error koneksi, kalau iya tampilkan offline page
-                if (request.isForMainFrame()) {
-                    view.loadUrl("file:///android_asset/no_internet.html");
-                }
-            }
-        });
-
-        // LOAD URL - Pastikan URL ini aktif!
+        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://vocalify.my.id/id/");
+    }
+
+    // Kelas untuk handle Share dari Web ke sistem Android
+    public class WebAppInterface {
+        @JavascriptInterface
+        public void share(String title, String text, String url) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text + " " + url);
+            sendIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sendIntent, title);
+            startActivity(shareIntent);
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+        if (webView.canGoBack()) { webView.goBack(); } 
+        else { super.onBackPressed(); }
     }
-            }
-
+}

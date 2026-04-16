@@ -22,49 +22,46 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- LAYOUT UTAMA ---
         FrameLayout rootLayout = new FrameLayout(this);
         setContentView(rootLayout);
 
-        // --- 1. SETTING WEBVIEW ---
         webView = new WebView(this);
         webView.setLayoutParams(new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        webView.setVisibility(View.INVISIBLE); // Sembunyikan dulu sampai web siap
+        webView.setVisibility(View.INVISIBLE); 
         rootLayout.addView(webView);
 
-        // --- 2. BUAT SPLASH SCREEN (Logo di Tengah) ---
         splashLayout = new FrameLayout(this);
-        splashLayout.setBackgroundColor(Color.parseColor("#0f172a")); // Warna background gelap (sesuai web lo)
+        splashLayout.setBackgroundColor(Color.parseColor("#0f172a")); 
         
         ImageView logo = new ImageView(this);
-        logo.setImageResource(R.mipmap.ic_launcher); // Ambil icon app lo
+        logo.setImageResource(R.mipmap.ic_launcher); 
         FrameLayout.LayoutParams logoParams = new FrameLayout.LayoutParams(300, 300);
         logoParams.gravity = android.view.Gravity.CENTER;
         splashLayout.addView(logo);
         
         rootLayout.addView(splashLayout);
 
-        // --- 3. MINTA IZIN NOTIFIKASI ---
+        // Di Android 11, baris ini bakal dilewati karena belum butuh izin manual
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
 
-        // --- 4. KONFIGURASI WEBVIEW ---
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
+        
+        // Pake User Agent Chrome terbaru biar MediaSession lancar
+        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                // Hilangkan Splash Screen dan munculkan Web setelah loading selesai
                 splashLayout.setVisibility(View.GONE);
                 webView.setVisibility(View.VISIBLE);
             }
@@ -90,5 +87,5 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()) { webView.goBack(); } 
         else { super.onBackPressed(); }
     }
-            }
+                                                  }
 

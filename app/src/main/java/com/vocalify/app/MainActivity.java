@@ -1,9 +1,14 @@
 package com.vocalify.app;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
@@ -15,20 +20,32 @@ public class MainActivity extends AppCompatActivity {
         webView = new WebView(this);
         setContentView(webView);
 
+        // MINTA IZIN NOTIFIKASI (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
+        
+        // Agar MediaSession API di web terdeteksi sebagai "Browser Pro"
+        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
 
-        // Jembatan buat fitur Share
+        // ChromeClient diperlukan untuk beberapa fitur media
+        webView.setWebChromeClient(new WebChromeClient());
+        
+        webView.setWebViewClient(new WebViewClient());
+
         webView.addJavascriptInterface(new WebAppInterface(), "AndroidShare");
 
-        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://vocalify.my.id/id/");
     }
 
-    // Kelas untuk handle Share dari Web ke sistem Android
     public class WebAppInterface {
         @JavascriptInterface
         public void share(String title, String text, String url) {
@@ -36,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, text + " " + url);
             sendIntent.setType("text/plain");
-            Intent shareIntent = Intent.createChooser(sendIntent, title);
-            startActivity(shareIntent);
+            startActivity(Intent.createChooser(sendIntent, title));
         }
     }
 
@@ -46,4 +62,5 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()) { webView.goBack(); } 
         else { super.onBackPressed(); }
     }
-}
+                                                  }
+        

@@ -1,14 +1,19 @@
-plugins { id 'com.android.application' }
+plugins {
+    id 'com.android.application'
+}
+
 android {
     namespace 'com.vocalify.app'
-    compileSdk 33
+    compileSdk 34
+
     defaultConfig {
         applicationId "com.vocalify.app"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 12111
         versionName "12.11.1"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -16,6 +21,7 @@ android {
         }
     }
 }
+
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'

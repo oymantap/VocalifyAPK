@@ -1,0 +1,93 @@
+name: Build Vocalify Official Indonesia
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Tombol rahasia biar bisa klik 'Run' manual
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant Permission
+        run: chmod +x gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Sign Android Release
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.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
+AgInEA==
+}}
+          alias: ${{ secrets.vocalify_key }}
+          keyStorePassword: ${{ secrets.rycl121112 }}
+          keyPassword: ${{ secrets.rycl121112 }}
+
+      - name: Upload Vocalify APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vocalify-Indonesia-v1.0
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          

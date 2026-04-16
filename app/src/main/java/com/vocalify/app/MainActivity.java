@@ -39,10 +39,8 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout.LayoutParams logoParams = new FrameLayout.LayoutParams(300, 300);
         logoParams.gravity = android.view.Gravity.CENTER;
         splashLayout.addView(logo);
-        
         rootLayout.addView(splashLayout);
 
-        // Di Android 11, baris ini bakal dilewati karena belum butuh izin manual
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
@@ -54,11 +52,15 @@ public class MainActivity extends AppCompatActivity {
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
-        
-        // Pake User Agent Chrome terbaru biar MediaSession lancar
         settings.setUserAgentString("Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
-        webView.setWebChromeClient(new WebChromeClient());
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(final PermissionRequest request) {
+                request.grant(request.getResources());
+            }
+        });
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         webView.addJavascriptInterface(new WebAppInterface(), "AndroidShare");
-        webView.loadUrl("https://vocalify.my.id/id/");
+        webView.loadUrl("https://vocalify.my.id/");
     }
 
     public class WebAppInterface {
@@ -87,5 +89,5 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()) { webView.goBack(); } 
         else { super.onBackPressed(); }
     }
-                                                  }
+            }
 

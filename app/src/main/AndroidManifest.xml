@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.vocalify.app">
-    <uses-permission android:name="android.permission.INTERNET" />
-    <application
-        android:label="Vocalify"
-        android:icon="@mipmap/ic_launcher"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+    <uses-permission android:name="android.permission.INTER
+        <application
+    android:allowBackup="true"
+    android:label="Vocalify"
+    android:icon="@mipmap/ic_launcher"
+    android:usesCleartextTraffic="true"
+    android:theme="@style/Theme.AppCompat.NoActionBar">
+        
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

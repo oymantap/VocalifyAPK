@@ -1,0 +1,7 @@
+defaultConfig {
+    applicationId "com.vocalify.app"
+    minSdk 21
+    targetSdk 33
+    versionCode 11111
+    versionName "11.11.1"
+}

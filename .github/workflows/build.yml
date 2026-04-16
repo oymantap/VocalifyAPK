@@ -9,8 +9,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      
+      # Kita paksa pake Gradle 8.5 biar aman sama Android
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.5
+
       - name: Build
         run: gradle assembleRelease --no-daemon
+
       - name: Sign
         uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -20,6 +28,7 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+
       - name: Upload
         uses: actions/upload-artifact@v4
         with:

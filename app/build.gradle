@@ -1,7 +1,30 @@
-defaultConfig {
-    applicationId "com.vocalify.app"
-    minSdk 21
-    targetSdk 33
-    versionCode 11111
-    versionName "11.11.1"
+plugins {
+    id 'com.android.application'
 }
+
+android {
+    namespace 'com.vocalify.app'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.vocalify.app"
+        minSdk 21
+        targetSdk 33
+        versionCode 12111
+        versionName "12.11.1"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+}
+
